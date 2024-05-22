@@ -1,5 +1,5 @@
 Getting Started with Docker
-
+=> This project is designed for running a Spring Boot application image locally using Docker.
 Prerequisites:
 1. Install Docker Desktop from here: https://www.docker.com/products/docker-desktop
 2. Enable the following Windows features:
