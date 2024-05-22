@@ -9,6 +9,7 @@ Prerequisites:
 Usage:
 1. Build and install your Spring Boot project.
 2. Make Dockerfile using below commands:
+   ```dockerfile
    FROM openjdk:21
    VOLUME /tmp
    EXPOSE 8080
