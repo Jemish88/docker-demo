@@ -8,10 +8,27 @@ Prerequisites:
 
 Usage:
 1. Build and install your Spring Boot project.
+2. Make Dockerfile using below commands:
+   FROM openjdk:21
+   VOLUME /tmp
+   EXPOSE 8080
+   ARG JAR_FILE=target/spring-boot-docker.jar
+   ADD ${JAR_FILE} app.jar
+   ENTRYPOINT ["java","-jar","/app.jar"]
 
-   Run the following commands:
+Explanation of the Dockerfile:
+- `FROM openjdk:11`: Specifies the base image with OpenJDK 21 (Java Development Kit version 21).
+- `VOLUME /tmp`: Creates a mount point at `/tmp` for holding external volumes.
+- `EXPOSE 8080`: Informs Docker that the container listens on port 8080.
+- `ARG JAR_FILE=target/spring-boot-docker.jar`: Defines a build-time variable `JAR_FILE` with a default value pointing to the JAR file.
+- `ADD ${JAR_FILE} app.jar`: Copies the JAR file into the Docker image and renames it to `app.jar`.
+- `ENTRYPOINT ["java","-jar","/app.jar"]`: Sets the command to run the JAR file using the Java runtime when the container starts.
+   
+Run the following commands:
    - docker build -t my-application .
    - docker run -p 8080:8080 my-application
+
+"my-application" was image name we can name it as we wanted
 
 Managing Docker Containers and Images:
 1. Check running containers: docker container ls
