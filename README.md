@@ -39,6 +39,7 @@ Managing Docker Containers and Images:
 5. Remove an image: docker rmi {image-id or name}
 6. Remove all images: docker rmi -f $(docker images -aq)
 7. Clean up unused Docker resources: docker system prune -a --volumes
+8. Stop container: docker stop {container-id or name}
 
 Notes:
 - Ensure Docker Desktop is running before executing Docker commands.
