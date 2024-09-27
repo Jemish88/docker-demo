@@ -2,6 +2,14 @@
 
 This project demonstrates how to build and run a Spring Boot application using Docker with a multi-stage Dockerfile. The Dockerfile includes a build stage with Maven and OpenJDK and a second stage for creating a slim runtime image.
 
+This project contains the spring-boot-actuators having prebuild endpoint to check the health of application.
+e.g
+
+```http://{url}/actuator```
+
+```http://{url}/actuator/health```
+
+
 ## Prerequisites
 
 1. **Install Docker Desktop**: You can download and install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
