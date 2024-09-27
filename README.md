@@ -6,8 +6,8 @@ This project demonstrates how to build and run a Spring Boot application using D
 
 1. **Install Docker Desktop**: You can download and install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
 2. **Enable the following Windows features** (if using Windows):
-   - Virtual Machine Platform
-   - Windows Subsystem for Linux (WSL)
+    - Virtual Machine Platform
+    - Windows Subsystem for Linux (WSL)
 
 ## Dockerfile Overview
 
@@ -54,7 +54,7 @@ EXPOSE 8080
 # Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
-
+```
 ## Explanation of the Dockerfile
 
 ### Stage 1: Build Stage
@@ -97,22 +97,22 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 - **`ENTRYPOINT ["java", "-jar", "app.jar"]`**: 
   - Runs the JAR file using the Java runtime.
  
-Run the following commands:
+**Run the following commands:**
    - docker build -t my-application .
    - docker run -p 8080:8080 my-application
 
 "my-application" was image name we can name it as we wanted
 
-Managing Docker Containers and Images:
-1. Check running containers: docker container ls
-2. Check existing images: docker images
-3. Remove a container: docker rm {container-id or name}
-4. Remove all containers: docker rm $(docker ps -qa)
-5. Remove an image: docker rmi {image-id or name}
-6. Remove all images: docker rmi -f $(docker images -aq)
-7. Clean up unused Docker resources: docker system prune -a --volumes
-8. Stop container: docker stop {container-id or name}
+**Managing Docker Containers and Images:**
+1. Check running containers: ```docker container ls```
+2. Check existing images: ```docker images```
+3. Remove a container: ```docker rm {container-id or name}```
+4. Remove all containers: ```docker rm $(docker ps -qa)```
+5. Remove an image: ```docker rmi {image-id or name}```
+6. Remove all images: ```docker rmi -f $(docker images -aq)```
+7. Clean up unused Docker resources: ```docker system prune -a --volumes```
+8. Stop container: ```docker stop {container-id or name}```
 
-Notes:
+**Notes:**
 - Ensure Docker Desktop is running before executing Docker commands.
 - Replace {container-id or name} and {image-id or name} with the actual container or image IDs/names as needed.
