@@ -1,30 +1,102 @@
-Getting Started with Docker
-=> This project is designed for running a Spring Boot application image locally using Docker.
-Prerequisites:
-1. Install Docker Desktop from here: https://www.docker.com/products/docker-desktop
-2. Enable the following Windows features:
+# Getting Started with Docker
+
+This project demonstrates how to build and run a Spring Boot application using Docker with a multi-stage Dockerfile. The Dockerfile includes a build stage with Maven and OpenJDK and a second stage for creating a slim runtime image.
+
+## Prerequisites
+
+1. **Install Docker Desktop**: You can download and install Docker Desktop from [here](https://www.docker.com/products/docker-desktop).
+2. **Enable the following Windows features** (if using Windows):
    - Virtual Machine Platform
-   - Windows Subsystem for Linux
+   - Windows Subsystem for Linux (WSL)
 
-Usage:
-1. Build and install your Spring Boot project.
-2. Make Dockerfile using below commands:
-   ```dockerfile
-   FROM openjdk:21
-   VOLUME /tmp
-   EXPOSE 8080
-   ARG JAR_FILE=target/spring-boot-docker.jar
-   ADD ${JAR_FILE} app.jar
-   ENTRYPOINT ["java","-jar","/app.jar"]
+## Dockerfile Overview
 
-Explanation of the Dockerfile:
-- `FROM openjdk:11`: Specifies the base image with OpenJDK 21 (Java Development Kit version 21).
-- `VOLUME /tmp`: Creates a mount point at `/tmp` for holding external volumes.
-- `EXPOSE 8080`: Informs Docker that the container listens on port 8080.
-- `ARG JAR_FILE=target/spring-boot-docker.jar`: Defines a build-time variable `JAR_FILE` with a default value pointing to the JAR file.
-- `ADD ${JAR_FILE} app.jar`: Copies the JAR file into the Docker image and renames it to `app.jar`.
-- `ENTRYPOINT ["java","-jar","/app.jar"]`: Sets the command to run the JAR file using the Java runtime when the container starts.
-   
+This Dockerfile uses a multi-stage build:
+1. **Stage 1**: Builds the Spring Boot application using Maven and OpenJDK.
+2. **Stage 2**: Creates a smaller runtime image with only the necessary files to run the application.
+
+### Dockerfile
+
+```dockerfile
+# Stage 1: Build stage with Maven and OpenJDK
+FROM openjdk:21-slim AS build
+
+# Install Maven in the build stage
+RUN apt-get update && apt-get install -y maven
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the Maven project files
+COPY pom.xml .
+
+# Download dependencies without running the whole build (offline mode)
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline
+
+# Copy the project source
+COPY src ./src
+
+# Build the Spring Boot application
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
+
+# Stage 2: Create a smaller runtime image for the Spring Boot app
+FROM openjdk:21-slim
+
+# Set the working directory for the runtime image
+WORKDIR /app
+
+# Copy only the built JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the default Spring Boot port
+EXPOSE 8080
+
+# Run the Spring Boot application
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+## Explanation of the Dockerfile
+
+### Stage 1: Build Stage
+
+- **`FROM openjdk:21-slim AS build`**: 
+  - Starts with a lightweight OpenJDK image.
+
+- **`RUN apt-get update && apt-get install -y maven`**: 
+  - Installs Maven for building the application.
+
+- **`WORKDIR /app`**: 
+  - Sets the working directory to `/app`.
+
+- **`COPY pom.xml .`**: 
+  - Copies the `pom.xml` file to the container.
+
+- **`RUN mvn dependency:go-offline`**: 
+  - Downloads project dependencies in offline mode.
+
+- **`COPY src ./src`**: 
+  - Copies the source code of the project.
+
+- **`RUN mvn clean package -DskipTests`**: 
+  - Builds the project and creates the JAR file, skipping tests.
+
+### Stage 2: Runtime Stage
+
+- **`FROM openjdk:21-slim`**: 
+  - Uses a slim OpenJDK image to keep the final image small.
+
+- **`WORKDIR /app`**: 
+  - Sets the working directory to `/app`.
+
+- **`COPY --from=build /app/target/*.jar app.jar`**: 
+  - Copies the built JAR from the build stage.
+
+- **`EXPOSE 8080`**: 
+  - Exposes port 8080 for the Spring Boot application.
+
+- **`ENTRYPOINT ["java", "-jar", "app.jar"]`**: 
+  - Runs the JAR file using the Java runtime.
+ 
 Run the following commands:
    - docker build -t my-application .
    - docker run -p 8080:8080 my-application
